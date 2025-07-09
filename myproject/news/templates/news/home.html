@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily News</title>
+   <link rel="stylesheet" href="{% static 'news/home.css' %}">
+</head>
+<body>
+    <header>
+        <h1>📰 Briefly </h1>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">World</a>
+            <a href="#">Politics</a>
+            <a href="#">Tech</a>
+            <a href="#">Sports</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="headline">
+            <h2>Top Story: Technology Changing the World</h2>
+            <p>The rapid advancement in AI and automation is transforming global industries...</p>
+        </section>
+
+        <section class="articles">
+            <article>
+                <h3>Sports: Local Team Wins Championship</h3>
+                <p>In a thrilling final match, the home team brought the trophy home...</p>
+            </article>
+            <article>
+                <h3>Politics: New Policies Introduced</h3>
+                <p>Government announced new economic reforms aimed at boosting employment...</p>
+            </article>
+            <article>
+                 <h3>World: Climate Change Impact Intensifies</h3>
+                 <p>Global temperatures continue to rise, leading to more frequent extreme weather events worldwide...</p>
+            </article>
+
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Daily News. All rights reserved.</p>
+    </footer>
+</body>
+</html>
