@@ -1,0 +1,154 @@
+{% extends 'news/base.html' %}
+
+{% block title %}Home - News Aggregator{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="jumbotron bg-primary text-white p-5 rounded mb-4">
+            <h1 class="display-4">
+                <i class="fas fa-newspaper me-3"></i>Welcome to News Aggregator
+            </h1>
+            <p class="lead">Stay updated with the latest news summaries from multiple sources</p>
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.3);">
+            <div class="row">
+                <div class="col-6 col-md-3">
+                    <div class="text-center">
+                        <h3>{{ total_articles }}</h3>
+                        <p class="mb-0">Total Articles</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="text-center">
+                        <h3><i class="fas fa-globe"></i></h3>
+                        <p class="mb-0">Multiple Sources</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="text-center">
+                        <h3><i class="fas fa-magic"></i></h3>
+                        <p class="mb-0">AI Summaries</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="text-center">
+                        <h3><i class="fas fa-clock"></i></h3>
+                        <p class="mb-0">Real-time Updates</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a class="btn btn-light btn-lg me-2" href="{% url 'news:article_list' %}">
+                    <i class="fas fa-list me-2"></i>View All Articles
+                </a>
+                {% if not scraping_status.is_running %}
+                    <form method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-download me-2"></i>Scrape New Articles
+                        </button>
+                    </form>
+                {% else %}
+                    <button class="btn btn-outline-light btn-lg" disabled>
+                        <i class="fas fa-spinner fa-spin me-2"></i>Scraping...
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if scraping_status.is_running %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            <h5><i class="fas fa-spinner fa-spin me-2"></i>Scraping in Progress</h5>
+            <p class="mb-0">{{ scraping_status.message }}</p>
+            {% if scraping_status.total > 0 %}
+                <div class="progress mt-2">
+                                <div class="progress-bar" role="progressbar" style="width: {% widthratio scraping_status.progress scraping_status.total 100 %}%">
+                                    {{ scraping_status.progress }}/{{ scraping_status.total }}
+                                </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4">
+            <i class="fas fa-star me-2 text-warning"></i>Latest News Summaries
+        </h2>
+    </div>
+</div>
+
+{% if articles %}
+<div class="row">
+    {% for article in articles %}
+    <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+        <div class="card news-card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    {% if article.category %}
+                        <span class="badge bg-secondary category-badge">{{ article.category }}</span>
+                    {% endif %}
+                    <small class="text-muted">{{ article.created_at|date:"M d, Y" }}</small>
+                </div>
+                <h5 class="card-title">
+                    {% if article.title %}
+                        {{ article.title|truncatechars:80 }}
+                    {% else %}
+                        Article Summary
+                    {% endif %}
+                </h5>
+                <p class="card-text text-muted">
+                    {{ article.get_short_summary }}
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{% url 'news:article_detail' article.pk %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-eye me-1"></i>Read More
+                    </a>
+                    <a href="{{ article.url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-external-link-alt me-1"></i>Original
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="text-center mt-4">
+    <a href="{% url 'news:article_list' %}" class="btn btn-outline-primary btn-lg">
+        <i class="fas fa-arrow-right me-2"></i>View All Articles
+    </a>
+</div>
+
+{% else %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="text-center py-5">
+            <i class="fas fa-newspaper text-muted" style="font-size: 4rem;"></i>
+            <h3 class="mt-3 text-muted">No Articles Yet</h3>
+            <p class="text-muted">Start by scraping some news articles to see summaries here.</p>
+            <a href="{% url 'news:scrape_articles' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-download me-2"></i>Scrape News Articles
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if scraping_status.is_running %}
+<script>
+// Auto-refresh page every 3 seconds when scraping is running
+setTimeout(function() {
+    location.reload();
+}, 3000);
+</script>
+{% endif %}
+{% endblock %}
