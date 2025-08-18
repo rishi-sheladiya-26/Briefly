@@ -1,0 +1,134 @@
+{% extends 'news/base.html' %}
+
+{% block title %}Scrape News - News Aggregator{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1><i class="fas fa-download me-2"></i>Scrape Latest News</h1>
+        <p class="text-muted">Fetch the latest news articles from various sources and generate AI summaries</p>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-cogs me-2"></i>Scraping Control</h5>
+            </div>
+            <div class="card-body">
+                {% if not scraping_status.is_running %}
+                    <p>Ready to scrape fresh news articles from multiple sources. This process will:</p>
+                    <ul>
+                        <li>Fetch latest articles from India Today and BBC News</li>
+                        <li>Extract full article content</li>
+                        <li>Generate AI-powered summaries</li>
+                        <li>Store new articles in the database</li>
+                    </ul>
+                    
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-play me-2"></i>Start Scraping
+                        </button>
+                    </form>
+                {% else %}
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-spinner fa-spin me-2"></i>Scraping in Progress</h5>
+                        <p class="mb-2">{{ scraping_status.message }}</p>
+                        
+                        {% if scraping_status.total > 0 %}
+                            <div class="progress mb-2">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" 
+                                     style="width: {% widthratio scraping_status.progress scraping_status.total 100 %}%">
+                                    {{ scraping_status.progress }}/{{ scraping_status.total }}
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                Progress: {% widthratio scraping_status.progress scraping_status.total 100 %}% complete
+                            </small>
+                        {% endif %}
+                    </div>
+                    
+                    <button class="btn btn-secondary" disabled>
+                        <i class="fas fa-hourglass-half me-2"></i>Scraping in Progress...
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle me-2"></i>News Sources</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-globe text-primary me-3" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h6 class="mb-0">India Today</h6>
+                        <small class="text-muted">Latest Indian news</small>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-globe text-success me-3" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h6 class="mb-0">BBC News</h6>
+                        <small class="text-muted">International news</small>
+                    </div>
+                </div>
+                
+                <hr>
+                <small class="text-muted">
+                    <i class="fas fa-shield-alt me-1"></i>
+                    All scraping respects robots.txt and rate limits
+                </small>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="fas fa-magic me-2"></i>AI Processing</h5>
+            </div>
+            <div class="card-body">
+                <p class="small mb-2">Our AI summarization:</p>
+                <ul class="small">
+                    <li>Extracts key information</li>
+                    <li>Removes redundancy</li>
+                    <li>Maintains context</li>
+                    <li>Preserves important details</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="alert alert-warning">
+            <h5><i class="fas fa-exclamation-triangle me-2"></i>Important Notes</h5>
+            <ul class="mb-0">
+                <li>Scraping may take several minutes depending on the number of articles</li>
+                <li>Only new articles (not already in database) will be processed</li>
+                <li>The page will automatically update with progress information</li>
+                <li>Do not refresh the page while scraping is in progress</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if scraping_status.is_running %}
+<script>
+// Auto-refresh progress every 3 seconds when scraping is running
+setTimeout(function() {
+    location.reload();
+}, 3000);
+</script>
+{% endif %}
+{% endblock %}
