@@ -3,113 +3,161 @@
 {% block title %}All Articles - News Aggregator{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <h1><i class="fas fa-list me-2"></i>All News Articles</h1>
-        <p class="text-muted">Browse through all collected news articles with their summaries</p>
-        <hr>
-    </div>
-</div>
-
-{% if articles %}
-<div class="row">
-    {% for article in articles %}
-    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-        <div class="card news-card h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    {% if article.category %}
-                        <span class="badge bg-secondary category-badge">{{ article.category }}</span>
-                    {% endif %}
-                    <small class="text-muted">{{ article.created_at|date:"M d, Y" }}</small>
-                </div>
-                <h5 class="card-title">
-                    {% if article.title %}
-                        {{ article.title|truncatechars:60 }}
-                    {% else %}
-                        Article Summary
-                    {% endif %}
-                </h5>
-                <p class="card-text text-muted">
-                    {{ article.get_short_summary }}
+<div class="fade-in">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="text-center mb-4">
+                <h1 class="display-5 fw-bold mb-3">
+                    <i class="fas fa-newspaper me-3 text-primary"></i>
+                    News Collection
+                </h1>
+                <p class="lead text-muted mb-4">
+                    Discover curated articles with AI-powered summaries
                 </p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <a href="{% url 'news:article_detail' article.pk %}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-eye me-1"></i>Read More
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="{% url 'news:home' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-home me-2"></i>Back to Home
                     </a>
-                    <a href="{{ article.url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-external-link-alt me-1"></i>Original
+                    <a href="{% url 'news:scrape_articles' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Add More Articles
                     </a>
                 </div>
             </div>
         </div>
     </div>
-    {% endfor %}
-</div>
-
-<!-- Pagination -->
-{% if articles.has_other_pages %}
-<nav aria-label="Articles pagination">
-    <ul class="pagination justify-content-center">
-        {% if articles.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page=1">
-                    <i class="fas fa-angle-double-left"></i>
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ articles.previous_page_number }}">
-                    <i class="fas fa-angle-left"></i>
-                </a>
-            </li>
-        {% endif %}
-
-        {% for num in articles.paginator.page_range %}
-            {% if articles.number == num %}
-                <li class="page-item active">
-                    <span class="page-link">{{ num }}</span>
-                </li>
-            {% elif num > articles.number|add:'-3' and num < articles.number|add:'3' %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                </li>
-            {% endif %}
+    
+    {% if articles %}
+    <!-- Articles Grid -->
+    <div class="row g-4 mb-5">
+        {% for article in articles %}
+        <div class="col-xl-4 col-lg-6 col-md-6">
+            <div class="card news-card h-100">
+                <div class="card-body p-4">
+                    <!-- Article Meta -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        {% if article.category %}
+                            <span class="badge bg-primary fw-medium">{{ article.category }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary fw-medium">General</span>
+                        {% endif %}
+                        <small class="text-muted fw-medium">
+                            <i class="fas fa-calendar me-1"></i>
+                            {{ article.created_at|date:"M d, Y" }}
+                        </small>
+                    </div>
+                    
+                    <!-- Article Title -->
+                    <h5 class="card-title mb-3 lh-base">
+                        {% if article.title %}
+                            {{ article.title|truncatechars:75 }}
+                        {% else %}
+                            Latest News Update
+                        {% endif %}
+                    </h5>
+                    
+                    <!-- Article Summary -->
+                    <p class="card-text text-muted mb-4 lh-base">
+                        {{ article.get_short_summary }}
+                    </p>
+                    
+                    <!-- Reading Time -->
+                    <div class="mb-3">
+                        <small class="text-muted d-flex align-items-center">
+                            <i class="fas fa-clock me-1"></i>
+                            ~{% widthratio article.full_text|wordcount 200 1 %} min read
+                            <span class="mx-2">•</span>
+                            {{ article.full_text|wordcount }} words
+                        </small>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 mt-auto">
+                        <a href="{% url 'news:article_detail' article.pk %}" 
+                           class="btn btn-primary flex-fill">
+                            <i class="fas fa-book-open me-2"></i>Read Summary
+                        </a>
+                        <a href="{{ article.url }}" 
+                           target="_blank" 
+                           class="btn btn-outline-secondary flex-fill"
+                           title="Read original article">
+                            <i class="fas fa-external-link-alt me-2"></i>Source
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endfor %}
+    </div>
 
-        {% if articles.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ articles.next_page_number }}">
-                    <i class="fas fa-angle-right"></i>
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ articles.paginator.num_pages }}">
-                    <i class="fas fa-angle-double-right"></i>
-                </a>
-            </li>
-        {% endif %}
-    </ul>
-</nav>
+    <!-- Pagination -->
+    {% if articles.has_other_pages %}
+    <div class="d-flex flex-column align-items-center mt-5">
+        <nav aria-label="Articles pagination" class="mb-3">
+            <ul class="pagination pagination-lg">
+                {% if articles.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" title="First page">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ articles.previous_page_number }}" title="Previous page">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
 
-<div class="text-center text-muted">
-    <small>
-        Showing {{ articles.start_index }} to {{ articles.end_index }} of {{ articles.paginator.count }} articles
-    </small>
-</div>
-{% endif %}
+                {% for num in articles.paginator.page_range %}
+                    {% if articles.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link fw-bold">{{ num }}</span>
+                        </li>
+                    {% elif num > articles.number|add:'-3' and num < articles.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
 
-{% else %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="text-center py-5">
-            <i class="fas fa-newspaper text-muted" style="font-size: 4rem;"></i>
-            <h3 class="mt-3 text-muted">No Articles Found</h3>
-            <p class="text-muted">Start by scraping some news articles to see them here.</p>
-            <a href="{% url 'news:scrape_articles' %}" class="btn btn-primary btn-lg">
-                <i class="fas fa-download me-2"></i>Scrape News Articles
-            </a>
+                {% if articles.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ articles.next_page_number }}" title="Next page">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ articles.paginator.num_pages }}" title="Last page">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        
+        <div class="card bg-light border-0 px-4 py-2">
+            <small class="text-muted fw-medium">
+                <i class="fas fa-info-circle me-2"></i>
+                Showing {{ articles.start_index }}-{{ articles.end_index }} of {{ articles.paginator.count }} articles
+            </small>
         </div>
     </div>
+    {% endif %}
+    
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-newspaper text-primary opacity-50" style="font-size: 6rem;"></i>
+        </div>
+        <h3 class="fw-bold text-muted mb-3">Your News Library is Empty</h3>
+        <p class="text-muted mb-4 fs-5">
+            Start building your personalized news collection by scraping articles from trusted sources.
+        </p>
+        <a href="{% url 'news:scrape_articles' %}" class="btn btn-primary btn-lg px-5">
+            <i class="fas fa-rocket me-2"></i>Start Collecting News
+        </a>
+    </div>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock %}

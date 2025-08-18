@@ -3,132 +3,219 @@
 {% block title %}{{ article.title|default:"Article Detail" }} - News Aggregator{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'news:home' %}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'news:article_list' %}">Articles</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Article Detail</li>
-            </ol>
-        </nav>
+<div class="fade-in">
+    <!-- Breadcrumb -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-light rounded px-3 py-2">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'news:home' %}" class="text-decoration-none">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'news:article_list' %}" class="text-decoration-none">
+                            <i class="fas fa-list me-1"></i>Articles
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active fw-medium" aria-current="page">
+                        Article Details
+                    </li>
+                </ol>
+            </nav>
+        </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-md-8">
-        <article class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    {% if article.category %}
-                        <span class="badge bg-primary">{{ article.category }}</span>
-                    {% endif %}
-                    <small class="text-muted">
-                        <i class="fas fa-clock me-1"></i>
-                        Published: {{ article.publication_date|date:"F d, Y" }}
-                    </small>
-                </div>
-                
-                <h1 class="card-title mb-4">
-                    {% if article.title %}
-                        {{ article.title }}
-                    {% else %}
-                        Article Summary
-                    {% endif %}
-                </h1>
-                
-                <div class="alert alert-info">
-                    <h5><i class="fas fa-magic me-2"></i>AI Generated Summary</h5>
-                    {% if article.summary %}
-                        <p class="mb-0">{{ article.summary }}</p>
-                    {% else %}
-                        <p class="mb-0 text-muted">No summary available for this article.</p>
-                    {% endif %}
-                </div>
-                
-                <div class="mb-4">
-                    <h3><i class="fas fa-file-alt me-2"></i>Full Article</h3>
+    <div class="row g-4">
+        <!-- Main Article Content -->
+        <div class="col-lg-8">
+            <article class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-5">
+                    <!-- Article Meta -->
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            {% if article.category %}
+                                <span class="badge bg-primary px-3 py-2 fs-6">{{ article.category }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary px-3 py-2 fs-6">General</span>
+                            {% endif %}
+                            <span class="text-muted fw-medium">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                {{ article.publication_date|date:"F d, Y" }}
+                            </span>
+                        </div>
+                        <div class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            ~{% widthratio article.full_text|wordcount 200 1 %} min read
+                        </div>
+                    </div>
+                    
+                    <!-- Article Title -->
+                    <h1 class="display-6 fw-bold mb-4 lh-base">
+                        {% if article.title %}
+                            {{ article.title }}
+                        {% else %}
+                            Article Summary
+                        {% endif %}
+                    </h1>
+                    
+                    <!-- AI Summary Section -->
+                    <div class="card border-0 bg-gradient mb-5" style="background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-robot text-primary fa-lg"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0">AI-Powered Summary</h5>
+                            </div>
+                            {% if article.summary %}
+                                <p class="fs-5 lh-lg mb-0 text-dark-emphasis">{{ article.summary }}</p>
+                            {% else %}
+                                <p class="text-muted fst-italic mb-0">Summary processing in progress...</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Full Article Content -->
                     <div class="article-content">
-                        {{ article.full_text|linebreaks }}
+                        <h3 class="fw-bold mb-4">
+                            <i class="fas fa-newspaper me-2 text-primary"></i>
+                            Complete Article
+                        </h3>
+                        <div class="fs-6 lh-lg text-justify">
+                            {{ article.full_text|linebreaks }}
+                        </div>
+                    </div>
+                    
+                    <!-- Article Footer -->
+                    <div class="border-top pt-4 mt-5">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <small class="text-muted d-flex align-items-center">
+                                    <i class="fas fa-plus-circle me-2"></i>
+                                    Added to library: {{ article.created_at|date:"F d, Y \a\t g:i A" }}
+                                </small>
+                            </div>
+                            <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                                <a href="{{ article.url }}" target="_blank" class="btn btn-success btn-lg">
+                                    <i class="fas fa-external-link-alt me-2"></i>Read Original Source
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="d-flex justify-content-between align-items-center border-top pt-3">
-                    <div>
-                        <small class="text-muted">
-                            <i class="fas fa-calendar me-1"></i>
-                            Added: {{ article.created_at|date:"F d, Y \a\t g:i A" }}
-                        </small>
-                    </div>
-                    <div>
-                        <a href="{{ article.url }}" target="_blank" class="btn btn-success">
-                            <i class="fas fa-external-link-alt me-2"></i>Read Original Article
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </article>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="fas fa-info-circle me-2"></i>Article Information</h5>
-            </div>
-            <div class="card-body">
-                <dl class="row">
-                    <dt class="col-sm-4">Source:</dt>
-                    <dd class="col-sm-8">
-                        <a href="{{ article.url }}" target="_blank" class="text-break">
-                            {{ article.url|truncatechars:40 }}
-                        </a>
-                    </dd>
-                    
-                    <dt class="col-sm-4">Category:</dt>
-                    <dd class="col-sm-8">{{ article.category|default:"General" }}</dd>
-                    
-                    <dt class="col-sm-4">Word Count:</dt>
-                    <dd class="col-sm-8">{{ article.full_text|wordcount }} words</dd>
-                    
-                    <dt class="col-sm-4">Reading Time:</dt>
-                    <dd class="col-sm-8">~{% widthratio article.full_text|wordcount 200 1 %} min</dd>
-                </dl>
-            </div>
+            </article>
         </div>
         
-        <div class="card mt-4">
-            <div class="card-header">
-                <h5><i class="fas fa-share-alt me-2"></i>Share Article</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="https://twitter.com/intent/tweet?text={{ article.title|urlencode }}&url={{ request.build_absolute_uri }}" 
-                       target="_blank" class="btn btn-outline-info btn-sm">
-                        <i class="fab fa-twitter me-2"></i>Share on Twitter
-                    </a>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
-                       target="_blank" class="btn btn-outline-primary btn-sm">
-                        <i class="fab fa-facebook me-2"></i>Share on Facebook
-                    </a>
-                    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" 
-                       target="_blank" class="btn btn-outline-secondary btn-sm">
-                        <i class="fab fa-linkedin me-2"></i>Share on LinkedIn
-                    </a>
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Article Stats -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-primary bg-opacity-10 border-0">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-chart-bar me-2 text-primary"></i>
+                        Article Insights
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="text-center p-3 bg-light rounded">
+                                <div class="fw-bold fs-4 text-primary">{{ article.full_text|wordcount }}</div>
+                                <small class="text-muted">Words</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center p-3 bg-light rounded">
+                                <div class="fw-bold fs-4 text-success">{% widthratio article.full_text|wordcount 200 1 %}</div>
+                                <small class="text-muted">Min Read</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="mb-3">
+                        <h6 class="fw-semibold mb-2">
+                            <i class="fas fa-tag me-2"></i>Category
+                        </h6>
+                        <span class="badge bg-primary fs-6 px-3 py-2">
+                            {{ article.category|default:"General" }}
+                        </span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="fw-semibold mb-2">
+                            <i class="fas fa-globe me-2"></i>Source
+                        </h6>
+                        <a href="{{ article.url }}" 
+                           target="_blank" 
+                           class="text-decoration-none fw-medium text-break">
+                            {{ article.url|truncatechars:45 }}
+                        </a>
+                    </div>
+                    
+                    <div>
+                        <h6 class="fw-semibold mb-2">
+                            <i class="fas fa-plus-circle me-2"></i>Added
+                        </h6>
+                        <span class="text-muted">{{ article.created_at|date:"M d, Y" }}</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="d-flex justify-content-between">
-            <a href="{% url 'news:article_list' %}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Back to Articles
-            </a>
-            <a href="{% url 'news:home' %}" class="btn btn-outline-primary">
-                <i class="fas fa-home me-2"></i>Back to Home
-            </a>
+            
+            <!-- Share Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-success bg-opacity-10 border-0">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-share-alt me-2 text-success"></i>
+                        Share This Story
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-grid gap-3">
+                        <a href="https://twitter.com/intent/tweet?text={{ article.title|urlencode }}&url={{ request.build_absolute_uri }}" 
+                           target="_blank" 
+                           class="btn btn-outline-info d-flex align-items-center">
+                            <i class="fab fa-twitter me-2"></i>Share on Twitter
+                        </a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                           target="_blank" 
+                           class="btn btn-outline-primary d-flex align-items-center">
+                            <i class="fab fa-facebook me-2"></i>Share on Facebook
+                        </a>
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" 
+                           target="_blank" 
+                           class="btn btn-outline-secondary d-flex align-items-center">
+                            <i class="fab fa-linkedin me-2"></i>Share on LinkedIn
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning bg-opacity-10 border-0">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-bolt me-2 text-warning"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'news:article_list' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i>Browse All Articles
+                        </a>
+                        <a href="{% url 'news:scrape_articles' %}" class="btn btn-outline-success">
+                            <i class="fas fa-plus me-2"></i>Add More Articles
+                        </a>
+                        <a href="{% url 'news:home' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -3,120 +3,268 @@
 {% block title %}Scrape News - News Aggregator{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <h1><i class="fas fa-download me-2"></i>Scrape Latest News</h1>
-        <p class="text-muted">Fetch the latest news articles from various sources and generate AI summaries</p>
-        <hr>
+<div class="fade-in">
+    <!-- Header Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold mb-3">
+            <i class="fas fa-sync-alt me-3 text-primary"></i>
+            News Collection Hub
+        </h1>
+        <p class="lead text-muted mb-4">
+            Automatically gather and process the latest news from trusted sources
+        </p>
     </div>
-</div>
-
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="fas fa-cogs me-2"></i>Scraping Control</h5>
-            </div>
-            <div class="card-body">
-                {% if not scraping_status.is_running %}
-                    <p>Ready to scrape fresh news articles from multiple sources. This process will:</p>
-                    <ul>
-                        <li>Fetch latest articles from India Today and BBC News</li>
-                        <li>Extract full article content</li>
-                        <li>Generate AI-powered summaries</li>
-                        <li>Store new articles in the database</li>
-                    </ul>
-                    
-                    <form method="post" class="mt-4">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fas fa-play me-2"></i>Start Scraping
-                        </button>
-                    </form>
-                {% else %}
-                    <div class="alert alert-info">
-                        <h5><i class="fas fa-spinner fa-spin me-2"></i>Scraping in Progress</h5>
-                        <p class="mb-2">{{ scraping_status.message }}</p>
+    
+    <div class="row g-4">
+        <!-- Main Scraping Control -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary bg-opacity-10 border-0">
+                    <h4 class="fw-bold mb-0">
+                        <i class="fas fa-robot me-2 text-primary"></i>
+                        Intelligent News Processor
+                    </h4>
+                </div>
+                <div class="card-body p-5">
+                    {% if not scraping_status.is_running %}
+                        <!-- Ready State -->
+                        <div class="text-center mb-4">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
+                                <i class="fas fa-rocket fa-2x text-success"></i>
+                            </div>
+                            <h5 class="fw-bold text-success mb-2">System Ready</h5>
+                            <p class="text-muted">Ready to collect the latest news stories</p>
+                        </div>
                         
-                        {% if scraping_status.total > 0 %}
-                            <div class="progress mb-2">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                                     role="progressbar" 
-                                     style="width: {% widthratio scraping_status.progress scraping_status.total 100 %}%">
-                                    {{ scraping_status.progress }}/{{ scraping_status.total }}
+                        <div class="alert alert-light border">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-magic me-2 text-primary"></i>
+                                What happens when you start?
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                            <i class="fas fa-search text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-medium">Source Discovery</div>
+                                            <small class="text-muted">Scan trusted news websites</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                                            <i class="fas fa-download text-success"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-medium">Content Extraction</div>
+                                            <small class="text-muted">Fetch full article text</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+                                            <i class="fas fa-brain text-warning"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-medium">AI Summarization</div>
+                                            <small class="text-muted">Generate intelligent summaries</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3">
+                                            <i class="fas fa-database text-info"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-medium">Storage & Indexing</div>
+                                            <small class="text-muted">Organize in your library</small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <small class="text-muted">
-                                Progress: {% widthratio scraping_status.progress scraping_status.total 100 %}% complete
-                            </small>
+                        </div>
+                        
+                        <div class="text-center">
+                            <form method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary btn-lg px-5">
+                                    <i class="fas fa-play-circle me-2"></i>Start Collection Process
+                                </button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <!-- Processing State -->
+                        <div class="text-center mb-4">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
+                                <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="fw-bold text-primary mb-2">Processing Articles</h5>
+                            <p class="text-muted">{{ scraping_status.message }}</p>
+                        </div>
+                        
+                        {% if scraping_status.total > 0 %}
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-medium">Progress</span>
+                                    <span class="badge bg-primary fs-6">{{ scraping_status.progress }}/{{ scraping_status.total }}</span>
+                                </div>
+                                <div class="progress" style="height: 12px;">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                         role="progressbar" 
+                                         style="width: {% widthratio scraping_status.progress scraping_status.total 100 %}%"></div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <small class="text-muted">
+                                        {% widthratio scraping_status.progress scraping_status.total 100 %}% Complete
+                                    </small>
+                                </div>
+                            </div>
                         {% endif %}
+                        
+                        <div class="text-center">
+                            <button class="btn btn-secondary btn-lg" disabled>
+                                <i class="fas fa-hourglass-half me-2"></i>Processing in Progress
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- News Sources -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-success bg-opacity-10 border-0">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-rss me-2 text-success"></i>
+                        Trusted Sources
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center p-3 bg-light rounded">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="fas fa-newspaper text-primary fa-lg"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-semibold mb-1">India Today</h6>
+                                <small class="text-muted">National & international news from India</small>
+                            </div>
+                        </div>
                     </div>
                     
-                    <button class="btn btn-secondary" disabled>
-                        <i class="fas fa-hourglass-half me-2"></i>Scraping in Progress...
-                    </button>
-                {% endif %}
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center p-3 bg-light rounded">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="fas fa-globe text-success fa-lg"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-semibold mb-1">BBC News</h6>
+                                <small class="text-muted">Global news and world updates</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info border-0 mb-0">
+                        <small class="fw-medium">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            Ethical Scraping Policy
+                        </small>
+                        <ul class="small mt-2 mb-0">
+                            <li>Respects robots.txt guidelines</li>
+                            <li>Implements rate limiting</li>
+                            <li>Minimal server impact</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Processing Info -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-warning bg-opacity-10 border-0">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-brain me-2 text-warning"></i>
+                        AI Features
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <h6 class="fw-semibold text-primary mb-2">Smart Summarization</h6>
+                        <ul class="small text-muted mb-0">
+                            <li>Extracts key insights</li>
+                            <li>Removes redundant information</li>
+                            <li>Preserves context and meaning</li>
+                            <li>Maintains factual accuracy</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="fw-semibold text-success mb-2">Content Processing</h6>
+                        <ul class="small text-muted mb-0">
+                            <li>Filters quality content</li>
+                            <li>Categorizes articles</li>
+                            <li>Removes advertisements</li>
+                            <li>Optimizes for reading</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info bg-opacity-10 border-0">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-bolt me-2 text-info"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'news:home' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                        <a href="{% url 'news:article_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-list me-2"></i>Browse Articles
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="fas fa-info-circle me-2"></i>News Sources</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="fas fa-globe text-primary me-3" style="font-size: 1.5rem;"></i>
-                    <div>
-                        <h6 class="mb-0">India Today</h6>
-                        <small class="text-muted">Latest Indian news</small>
+    <!-- Important Information -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="alert alert-warning border-0" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 235, 59, 0.1) 100%);">
+                <div class="d-flex align-items-start">
+                    <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3 mt-1">
+                        <i class="fas fa-info-circle text-warning"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-bold text-warning mb-2">Processing Guidelines</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <ul class="small mb-0 text-muted">
+                                    <li>Processing time varies with article count</li>
+                                    <li>Only new articles are collected</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="small mb-0 text-muted">
+                                    <li>Page updates automatically during processing</li>
+                                    <li>Safe to leave page running in background</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="d-flex align-items-center mb-3">
-                    <i class="fas fa-globe text-success me-3" style="font-size: 1.5rem;"></i>
-                    <div>
-                        <h6 class="mb-0">BBC News</h6>
-                        <small class="text-muted">International news</small>
-                    </div>
-                </div>
-                
-                <hr>
-                <small class="text-muted">
-                    <i class="fas fa-shield-alt me-1"></i>
-                    All scraping respects robots.txt and rate limits
-                </small>
             </div>
-        </div>
-        
-        <div class="card mt-4">
-            <div class="card-header">
-                <h5><i class="fas fa-magic me-2"></i>AI Processing</h5>
-            </div>
-            <div class="card-body">
-                <p class="small mb-2">Our AI summarization:</p>
-                <ul class="small">
-                    <li>Extracts key information</li>
-                    <li>Removes redundancy</li>
-                    <li>Maintains context</li>
-                    <li>Preserves important details</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="alert alert-warning">
-            <h5><i class="fas fa-exclamation-triangle me-2"></i>Important Notes</h5>
-            <ul class="mb-0">
-                <li>Scraping may take several minutes depending on the number of articles</li>
-                <li>Only new articles (not already in database) will be processed</li>
-                <li>The page will automatically update with progress information</li>
-                <li>Do not refresh the page while scraping is in progress</li>
-            </ul>
         </div>
     </div>
 </div>
