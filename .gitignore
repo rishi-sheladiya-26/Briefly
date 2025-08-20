@@ -41,6 +41,7 @@ env/
 ENV/
 env.bak/
 venv.bak/
+project_env/
 
 # IDE
 .vscode/
