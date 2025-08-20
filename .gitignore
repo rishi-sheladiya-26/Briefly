@@ -2,6 +2,8 @@
 .env
 
 FRIEND_SETUP_GUIDE.md
+*.md
+
 # Python
 __pycache__/
 *.py[cod]
