@@ -3,143 +3,187 @@
 {% block title %}Home - News Aggregator{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="jumbotron bg-primary text-white p-5 rounded mb-4">
-            <h1 class="display-4">
-                <i class="fas fa-newspaper me-3"></i>Welcome to News Aggregator
-            </h1>
-            <p class="lead">Stay updated with the latest news summaries from multiple sources</p>
-            <hr class="my-4" style="border-color: rgba(255,255,255,0.3);">
-            <div class="row">
-                <div class="col-6 col-md-3">
+<div class="fade-in">
+    <!-- Hero Section -->
+    <div class="hero-section text-white p-5">
+        <div class="hero-content">
+            <div class="text-center mb-5">
+                <h1 class="display-3 fw-bold mb-4">
+                    <i class="fas fa-newspaper me-3 text-warning"></i>
+                    News Aggregator
+                </h1>
+                <p class="lead fs-4 mb-4 opacity-90">
+                    Your intelligent news companion powered by AI
+                </p>
+                <p class="fs-5 opacity-75 mb-5">
+                    Stay informed with curated summaries from trusted sources worldwide
+                </p>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-5">
+                <div class="col-6 col-lg-3">
                     <div class="text-center">
-                        <h3>{{ total_articles }}</h3>
-                        <p class="mb-0">Total Articles</p>
+                        <div class="bg-white bg-opacity-20 rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <h2 class="mb-0 fw-bold">{{ total_articles }}</h2>
+                        </div>
+                        <h6 class="fw-semibold">Articles Collected</h6>
                     </div>
                 </div>
-                <div class="col-6 col-md-3">
+                <div class="col-6 col-lg-3">
                     <div class="text-center">
-                        <h3><i class="fas fa-globe"></i></h3>
-                        <p class="mb-0">Multiple Sources</p>
+                        <div class="bg-white bg-opacity-20 rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-globe fa-2x"></i>
+                        </div>
+                        <h6 class="fw-semibold">Multiple Sources</h6>
                     </div>
                 </div>
-                <div class="col-6 col-md-3">
+                <div class="col-6 col-lg-3">
                     <div class="text-center">
-                        <h3><i class="fas fa-magic"></i></h3>
-                        <p class="mb-0">AI Summaries</p>
+                        <div class="bg-white bg-opacity-20 rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-robot fa-2x"></i>
+                        </div>
+                        <h6 class="fw-semibold">AI Summaries</h6>
                     </div>
                 </div>
-                <div class="col-6 col-md-3">
+                <div class="col-6 col-lg-3">
                     <div class="text-center">
-                        <h3><i class="fas fa-clock"></i></h3>
-                        <p class="mb-0">Real-time Updates</p>
+                        <div class="bg-white bg-opacity-20 rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-bolt fa-2x"></i>
+                        </div>
+                        <h6 class="fw-semibold">Real-time Updates</h6>
                     </div>
                 </div>
             </div>
-            <div class="mt-4">
-                <a class="btn btn-light btn-lg me-2" href="{% url 'news:article_list' %}">
-                    <i class="fas fa-list me-2"></i>View All Articles
+            
+            <!-- Action Buttons -->
+            <div class="text-center">
+                <a class="btn btn-light btn-lg me-3 mb-2" href="{% url 'news:article_list' %}">
+                    <i class="fas fa-book-open me-2"></i>Explore Articles
                 </a>
                 {% if not scraping_status.is_running %}
                     <form method="post" style="display: inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-download me-2"></i>Scrape New Articles
+                        <button type="submit" class="btn btn-outline-light btn-lg mb-2">
+                            <i class="fas fa-sync-alt me-2"></i>Fetch Latest News
                         </button>
                     </form>
                 {% else %}
-                    <button class="btn btn-outline-light btn-lg" disabled>
-                        <i class="fas fa-spinner fa-spin me-2"></i>Scraping...
+                    <button class="btn btn-outline-light btn-lg mb-2" disabled>
+                        <i class="fas fa-spinner fa-spin me-2"></i>Processing...
                     </button>
                 {% endif %}
             </div>
         </div>
     </div>
-</div>
 
-{% if scraping_status.is_running %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="alert alert-info">
-            <h5><i class="fas fa-spinner fa-spin me-2"></i>Scraping in Progress</h5>
-            <p class="mb-0">{{ scraping_status.message }}</p>
+    <!-- Scraping Status -->
+    {% if scraping_status.is_running %}
+    <div class="slide-in-left">
+        <div class="alert alert-info mb-4">
+            <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-spinner fa-spin me-3 fa-lg"></i>
+                <h5 class="mb-0 fw-semibold">Processing Latest News</h5>
+            </div>
+            <p class="mb-2 opacity-75">{{ scraping_status.message }}</p>
             {% if scraping_status.total > 0 %}
-                <div class="progress mt-2">
-                                <div class="progress-bar" role="progressbar" style="width: {% widthratio scraping_status.progress scraping_status.total 100 %}%">
-                                    {{ scraping_status.progress }}/{{ scraping_status.total }}
-                                </div>
+                <div class="progress mt-3">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" 
+                         style="width: {% widthratio scraping_status.progress scraping_status.total 100 %}%">
+                        {{ scraping_status.progress }}/{{ scraping_status.total }}
+                    </div>
                 </div>
+                <small class="text-muted mt-2 d-block">
+                    Progress: {% widthratio scraping_status.progress scraping_status.total 100 %}% complete
+                </small>
             {% endif %}
         </div>
     </div>
-</div>
-{% endif %}
-
-<div class="row">
-    <div class="col-md-12">
-        <h2 class="mb-4">
-            <i class="fas fa-star me-2 text-warning"></i>Latest News Summaries
-        </h2>
-    </div>
-</div>
-
-{% if articles %}
-<div class="row">
-    {% for article in articles %}
-    <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
-        <div class="card news-card h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    {% if article.category %}
-                        <span class="badge bg-secondary category-badge">{{ article.category }}</span>
-                    {% endif %}
-                    <small class="text-muted">{{ article.created_at|date:"M d, Y" }}</small>
-                </div>
-                <h5 class="card-title">
-                    {% if article.title %}
-                        {{ article.title|truncatechars:80 }}
-                    {% else %}
-                        Article Summary
-                    {% endif %}
-                </h5>
-                <p class="card-text text-muted">
-                    {{ article.get_short_summary }}
-                </p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <a href="{% url 'news:article_detail' article.pk %}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-eye me-1"></i>Read More
-                    </a>
-                    <a href="{{ article.url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-external-link-alt me-1"></i>Original
-                    </a>
+    {% endif %}
+    
+    <!-- Featured Articles Section -->
+    <div class="slide-in-left">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h2 class="fw-bold mb-0">
+                <i class="fas fa-fire me-2 text-warning"></i>
+                Trending Stories
+            </h2>
+            {% if articles %}
+            <a href="{% url 'news:article_list' %}" class="btn btn-outline-primary">
+                View All <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+            {% endif %}
+        </div>
+        
+        {% if articles %}
+        <div class="row g-4">
+            {% for article in articles %}
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="card news-card h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            {% if article.category %}
+                                <span class="badge bg-primary">{{ article.category }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">General</span>
+                            {% endif %}
+                            <small class="text-muted fw-medium">
+                                <i class="fas fa-clock me-1"></i>
+                                {{ article.created_at|date:"M d, Y" }}
+                            </small>
+                        </div>
+                        
+                        <h5 class="card-title mb-3 lh-base">
+                            {% if article.title %}
+                                {{ article.title|truncatechars:85 }}
+                            {% else %}
+                                Latest News Update
+                            {% endif %}
+                        </h5>
+                        
+                        <p class="card-text text-muted mb-4 lh-base">
+                            {{ article.get_short_summary }}
+                        </p>
+                        
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'news:article_detail' article.pk %}" 
+                               class="btn btn-primary flex-fill">
+                                <i class="fas fa-book-open me-2"></i>Read Summary
+                            </a>
+                            <a href="{{ article.url }}" 
+                               target="_blank" 
+                               class="btn btn-outline-secondary flex-fill">
+                                <i class="fas fa-external-link-alt me-2"></i>Source
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-    </div>
-    {% endfor %}
-</div>
-
-<div class="text-center mt-4">
-    <a href="{% url 'news:article_list' %}" class="btn btn-outline-primary btn-lg">
-        <i class="fas fa-arrow-right me-2"></i>View All Articles
-    </a>
-</div>
-
-{% else %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="text-center py-5">
-            <i class="fas fa-newspaper text-muted" style="font-size: 4rem;"></i>
-            <h3 class="mt-3 text-muted">No Articles Yet</h3>
-            <p class="text-muted">Start by scraping some news articles to see summaries here.</p>
-            <a href="{% url 'news:scrape_articles' %}" class="btn btn-primary btn-lg">
-                <i class="fas fa-download me-2"></i>Scrape News Articles
+        
+        <div class="text-center mt-5">
+            <a href="{% url 'news:article_list' %}" class="btn btn-primary btn-lg px-5">
+                <i class="fas fa-newspaper me-2"></i>Discover More Stories
             </a>
         </div>
+        
+        {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-newspaper text-primary opacity-50" style="font-size: 5rem;"></i>
+            </div>
+            <h3 class="fw-bold text-muted mb-3">Ready to Explore the World</h3>
+            <p class="text-muted mb-4 fs-5">Your personalized news feed awaits. Let's gather the latest stories for you.</p>
+            <a href="{% url 'news:scrape_articles' %}" class="btn btn-primary btn-lg px-5">
+                <i class="fas fa-rocket me-2"></i>Start Collecting News
+            </a>
+        </div>
+        {% endif %}
     </div>
 </div>
-{% endif %}
 {% endblock %}
 
 {% block scripts %}
