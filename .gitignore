@@ -1,6 +1,10 @@
 # Environment variables
 .env
 
+FRIEND_SETUP_GUIDE.md
+*.md
+SETUP_CLOUD_DB.md
+
 # Python
 __pycache__/
 *.py[cod]
@@ -38,6 +42,7 @@ env/
 ENV/
 env.bak/
 venv.bak/
+project_env/
 
 # IDE
 .vscode/
