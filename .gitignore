@@ -4,6 +4,7 @@
 FRIEND_SETUP_GUIDE.md
 *.md
 SETUP_CLOUD_DB.md
+UI_FIXES_SUMMARY.md
 
 # Python
 __pycache__/
@@ -43,6 +44,7 @@ ENV/
 env.bak/
 venv.bak/
 project_env/
+Testing_File/
 
 # IDE
 .vscode/
