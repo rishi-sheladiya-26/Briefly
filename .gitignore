@@ -44,6 +44,7 @@ ENV/
 env.bak/
 venv.bak/
 project_env/
+Testing_File/
 
 # IDE
 .vscode/
