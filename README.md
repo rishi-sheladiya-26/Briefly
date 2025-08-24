@@ -1,6 +1,6 @@
-# 🚀 NewsAggregator - Shared Cloud Database
+# ⚡ Briefly - Smart News Aggregator
 
-A Django-based news aggregation web app with **shared cloud database** using Supabase.
+A Django-based news aggregation web app with AI-powered summaries and **shared cloud database** using Supabase.
 
 ## ⚡ Quick Start for Friends
 

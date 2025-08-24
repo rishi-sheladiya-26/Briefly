@@ -1,12 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+from django.utils import timezone
 import time
 import re
+import concurrent.futures
+import threading
 from news.models import Article
 from django.utils.timezone import now
+from urllib.parse import urljoin, urlparse
 
-def scrape_news_articles():
+def scrape_news_articles(stop_check_func=None):
     """
     Scrape news articles from multiple sources and return list
     """
@@ -18,28 +22,63 @@ def scrape_news_articles():
             'name': 'India Today',
             'url': 'https://www.indiatoday.in/latest-news',
             'scraper': scrape_india_today
+        },
+        {
+            'name': 'Times of India',
+            'url': 'https://timesofindia.indiatimes.com/home/headlines',
+            'scraper': scrape_times_of_india
+        },
+        {
+            'name': 'NDTV',
+            'url': 'https://www.ndtv.com/latest',
+            'scraper': scrape_ndtv
         }
     ]
     
-    for source in sources:
-        try:
-            print(f"Scraping from {source['name']}...")
-            articles = source['scraper']()
-            if articles:
-                all_articles.extend(articles)
-            time.sleep(1)  # Be respectful to the servers
-        except Exception as e:
-            print(f"Error scraping {source['name']}: {e}")
-            continue
+    # Use concurrent processing for faster scraping
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        future_to_source = {}
+        
+        for source in sources:
+            if stop_check_func and stop_check_func():
+                print("Scraping stopped by user request")
+                break
+                
+            print(f"Starting scraper for {source['name']}...")
+            future = executor.submit(source['scraper'], stop_check_func)
+            future_to_source[future] = source['name']
+        
+        # Collect results as they complete
+        for future in concurrent.futures.as_completed(future_to_source):
+            source_name = future_to_source[future]
+            try:
+                articles = future.result(timeout=30)  # 30 second timeout per source
+                if articles:
+                    all_articles.extend(articles)
+                    print(f"✓ {source_name}: Found {len(articles)} articles")
+                else:
+                    print(f"✗ {source_name}: No articles found")
+            except Exception as e:
+                print(f"Error scraping {source_name}: {e}")
+                continue
+    
+    # Limit total articles to 3 most recent ones
+    if len(all_articles) > 3:
+        all_articles = all_articles[:3]
     
     return all_articles
 
-def scrape_india_today():
+def scrape_india_today(stop_check_func=None):
     """
     Scrape articles from India Today and return article data
     """
     articles = []
     try:
+        # Check if stop was requested before starting
+        if stop_check_func and stop_check_func():
+            print("Scraping stopped by user request")
+            return articles
+            
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
@@ -60,6 +99,11 @@ def scrape_india_today():
         
         processed_urls = set()  # Avoid duplicates
         for href in story_links[:10]:  # Check first 10 story links
+            # Check if stop was requested before processing each link
+            if stop_check_func and stop_check_func():
+                print("Scraping stopped by user request")
+                break
+                
             if not href.startswith('http'):
                 href = 'https://www.indiatoday.in' + href
             
@@ -87,6 +131,104 @@ def scrape_india_today():
         print(f"Error scraping India Today: {e}")
     
     print(f"Returning {len(articles)} articles")
+    return articles
+
+def scrape_times_of_india(stop_check_func=None):
+    """
+    Scrape articles from Times of India and return article data
+    """
+    articles = []
+    try:
+        if stop_check_func and stop_check_func():
+            return articles
+            
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+        response = requests.get('https://timesofindia.indiatimes.com/home/headlines', headers=headers, timeout=10)
+        response.raise_for_status()
+        
+        soup = BeautifulSoup(response.content, 'html.parser')
+        article_links = soup.find_all('a', href=True)
+        
+        story_links = []
+        for link in article_links:
+            href = link.get('href')
+            if href and ('/articleshow/' in href or '/city/' in href):
+                if not href.startswith('http'):
+                    href = 'https://timesofindia.indiatimes.com' + href
+                story_links.append(href)
+        
+        processed_urls = set()
+        for href in story_links[:5]:  # Check first 5 story links
+            if stop_check_func and stop_check_func():
+                break
+                
+            if href in processed_urls:
+                continue
+            processed_urls.add(href)
+            
+            article_data = scrape_article_content(href)
+            if article_data:
+                article_data['category'] = 'India'
+                articles.append(article_data)
+                time.sleep(0.3)
+                
+                if len(articles) >= 1:  # Limit to 1 article per source
+                    break
+                    
+    except Exception as e:
+        print(f"Error scraping Times of India: {e}")
+    
+    return articles
+
+def scrape_ndtv(stop_check_func=None):
+    """
+    Scrape articles from NDTV and return article data
+    """
+    articles = []
+    try:
+        if stop_check_func and stop_check_func():
+            return articles
+            
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+        response = requests.get('https://www.ndtv.com/latest', headers=headers, timeout=10)
+        response.raise_for_status()
+        
+        soup = BeautifulSoup(response.content, 'html.parser')
+        article_links = soup.find_all('a', href=True)
+        
+        story_links = []
+        for link in article_links:
+            href = link.get('href')
+            if href and ('/news/' in href or '/india-news/' in href):
+                if not href.startswith('http'):
+                    href = 'https://www.ndtv.com' + href
+                story_links.append(href)
+        
+        processed_urls = set()
+        for href in story_links[:5]:  # Check first 5 story links
+            if stop_check_func and stop_check_func():
+                break
+                
+            if href in processed_urls:
+                continue
+            processed_urls.add(href)
+            
+            article_data = scrape_article_content(href)
+            if article_data:
+                article_data['category'] = 'Breaking'
+                articles.append(article_data)
+                time.sleep(0.3)
+                
+                if len(articles) >= 1:  # Limit to 1 article per source
+                    break
+                    
+    except Exception as e:
+        print(f"Error scraping NDTV: {e}")
+    
     return articles
 
 def scrape_article_content(url):
@@ -143,7 +285,7 @@ def scrape_article_content(url):
             'title': title,
             'url': url,
             'full_text': full_text,
-            'publication_date': datetime.now(),
+            'publication_date': timezone.now(),
             'category': 'General'
         }
     

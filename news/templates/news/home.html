@@ -1,198 +1,683 @@
 {% extends 'news/base.html' %}
+{% load static %}
 
-{% block title %}Home - News Aggregator{% endblock %}
+{% block title %}Briefly - Stay Informed{% endblock %}
 
 {% block content %}
-<div class="fade-in">
-    <!-- Hero Section -->
-    <div class="hero-section text-white p-5">
-        <div class="hero-content">
-            <div class="text-center mb-5">
-                <h1 class="display-3 fw-bold mb-4">
-                    <i class="fas fa-newspaper me-3 text-warning"></i>
-                    News Aggregator
-                </h1>
-                <p class="lead fs-4 mb-4 opacity-90">
-                    Your intelligent news companion powered by AI
-                </p>
-                <p class="fs-5 opacity-75 mb-5">
-                    Stay informed with curated summaries from trusted sources worldwide
-                </p>
-            </div>
-            
-            <!-- Stats Cards -->
-            <div class="row g-4 mb-5">
-                <div class="col-6 col-lg-3">
-                    <div class="text-center">
-                        <div class="bg-white bg-opacity-20 rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <h2 class="mb-0 fw-bold">{{ total_articles }}</h2>
-                        </div>
-                        <h6 class="fw-semibold">Articles Collected</h6>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="text-center">
-                        <div class="bg-white bg-opacity-20 rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="fas fa-globe fa-2x"></i>
-                        </div>
-                        <h6 class="fw-semibold">Multiple Sources</h6>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="text-center">
-                        <div class="bg-white bg-opacity-20 rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="fas fa-robot fa-2x"></i>
-                        </div>
-                        <h6 class="fw-semibold">AI Summaries</h6>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="text-center">
-                        <div class="bg-white bg-opacity-20 rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="fas fa-bolt fa-2x"></i>
-                        </div>
-                        <h6 class="fw-semibold">Real-time Updates</h6>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="text-center">
-                <a class="btn btn-light btn-lg me-3 mb-2" href="{% url 'news:article_list' %}">
-                    <i class="fas fa-book-open me-2"></i>Explore Articles
-                </a>
-                {% if not scraping_status.is_running %}
-                    <form method="post" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-light btn-lg mb-2">
-                            <i class="fas fa-sync-alt me-2"></i>Fetch Latest News
-                        </button>
-                    </form>
-                {% else %}
-                    <button class="btn btn-outline-light btn-lg mb-2" disabled>
-                        <i class="fas fa-spinner fa-spin me-2"></i>Processing...
-                    </button>
-                {% endif %}
-            </div>
+<!-- Modern Header Section -->
+<div class="hero-section glass-card mb-5 p-5">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="display-5 fw-bold mb-3">
+                <i class="fas fa-bolt me-3 text-primary"></i>Latest News, Briefly
+            </h1>
+            <p class="lead text-secondary mb-4">
+                Get concise, intelligent news summaries from multiple trusted sources in seconds
+            </p>
         </div>
-    </div>
-
-    <!-- Scraping Status -->
-    {% if scraping_status.is_running %}
-    <div class="slide-in-left">
-        <div class="alert alert-info mb-4">
-            <div class="d-flex align-items-center mb-2">
-                <i class="fas fa-spinner fa-spin me-3 fa-lg"></i>
-                <h5 class="mb-0 fw-semibold">Processing Latest News</h5>
-            </div>
-            <p class="mb-2 opacity-75">{{ scraping_status.message }}</p>
-            {% if scraping_status.total > 0 %}
-                <div class="progress mt-3">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                         role="progressbar" 
-                         style="width: {% widthratio scraping_status.progress scraping_status.total 100 %}%">
-                        {{ scraping_status.progress }}/{{ scraping_status.total }}
-                    </div>
-                </div>
-                <small class="text-muted mt-2 d-block">
-                    Progress: {% widthratio scraping_status.progress scraping_status.total 100 %}% complete
-                </small>
-            {% endif %}
-        </div>
-    </div>
-    {% endif %}
-    
-    <!-- Featured Articles Section -->
-    <div class="slide-in-left">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <h2 class="fw-bold mb-0">
-                <i class="fas fa-fire me-2 text-warning"></i>
-                Trending Stories
-            </h2>
-            {% if articles %}
-            <a href="{% url 'news:article_list' %}" class="btn btn-outline-primary">
-                View All <i class="fas fa-arrow-right ms-1"></i>
-            </a>
-            {% endif %}
-        </div>
-        
-        {% if articles %}
-        <div class="row g-4">
-            {% for article in articles %}
-            <div class="col-lg-6 col-md-6 mb-4">
-                <div class="card news-card h-100">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            {% if article.category %}
-                                <span class="badge bg-primary">{{ article.category }}</span>
-                            {% else %}
-                                <span class="badge bg-secondary">General</span>
-                            {% endif %}
-                            <small class="text-muted fw-medium">
-                                <i class="fas fa-clock me-1"></i>
-                                {{ article.created_at|date:"M d, Y" }}
-                            </small>
-                        </div>
-                        
-                        <h5 class="card-title mb-3 lh-base">
-                            {% if article.title %}
-                                {{ article.title|truncatechars:85 }}
-                            {% else %}
-                                Latest News Update
-                            {% endif %}
-                        </h5>
-                        
-                        <p class="card-text text-muted mb-4 lh-base">
-                            {{ article.get_short_summary }}
-                        </p>
-                        
-                        <div class="d-flex gap-2">
-                            <a href="{% url 'news:article_detail' article.pk %}" 
-                               class="btn btn-primary flex-fill">
-                                <i class="fas fa-book-open me-2"></i>Read Summary
-                            </a>
-                            <a href="{{ article.url }}" 
-                               target="_blank" 
-                               class="btn btn-outline-secondary flex-fill">
-                                <i class="fas fa-external-link-alt me-2"></i>Source
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        
-        <div class="text-center mt-5">
-            <a href="{% url 'news:article_list' %}" class="btn btn-primary btn-lg px-5">
-                <i class="fas fa-newspaper me-2"></i>Discover More Stories
+        <div class="col-md-4 text-end">
+            <a href="{% url 'news:scrape_articles' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>Add News
             </a>
         </div>
-        
-        {% else %}
-        <!-- Empty State -->
-        <div class="text-center py-5">
-            <div class="mb-4">
-                <i class="fas fa-newspaper text-primary opacity-50" style="font-size: 5rem;"></i>
-            </div>
-            <h3 class="fw-bold text-muted mb-3">Ready to Explore the World</h3>
-            <p class="text-muted mb-4 fs-5">Your personalized news feed awaits. Let's gather the latest stories for you.</p>
-            <a href="{% url 'news:scrape_articles' %}" class="btn btn-primary btn-lg px-5">
-                <i class="fas fa-rocket me-2"></i>Start Collecting News
-            </a>
-        </div>
-        {% endif %}
     </div>
 </div>
+
+<!-- Statistics Cards -->
+<div class="row g-4 mb-5">
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-newspaper fa-2x text-primary"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h3 class="mb-0 fw-bold text-primary">{{ total_articles }}</h3>
+                    <p class="mb-0 text-muted small">Total Articles</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-rss fa-2x text-success"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h3 class="mb-0 fw-bold text-success">{{ sources_count }}</h3>
+                    <p class="mb-0 text-muted small">News Sources</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-robot fa-2x text-info"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h3 class="mb-0 fw-bold text-info">{{ ai_summaries_count }}</h3>
+                    <p class="mb-0 text-muted small">AI Summaries</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-clock fa-2x text-warning"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h3 class="mb-0 fw-bold text-warning">{{ recent_updates_count }}</h3>
+                    <p class="mb-0 text-muted small">Recent Updates</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main News Content -->
+<!-- Scraping Status Alert -->
+{% if scraping_status.is_running %}
+<div class="alert alert-info mb-4">
+    <div class="d-flex align-items-center">
+        <div class="spinner-border spinner-border-sm text-info me-3" role="status"></div>
+        <div class="flex-grow-1">
+            <h6 class="mb-1 fw-bold">
+                <i class="fas fa-sync-alt me-2"></i>Updating News Feed
+            </h6>
+            <p class="mb-0 small">{{ scraping_status.message }}</p>
+            {% if scraping_status.total > 0 %}
+            <div class="progress mt-2" style="height: 4px;">
+                <div class="progress-bar" 
+                     style="width: {% widthratio scraping_status.progress scraping_status.total 100 %}%"></div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+    
+<!-- Section Header -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h2 class="fw-bold mb-0">
+        <i class="fas fa-fire me-2 text-warning"></i>Featured Articles
+    </h2>
+    {% if articles %}
+    <span class="badge bg-primary px-3 py-2">
+        {{ articles|length }} Article{{ articles|length|pluralize }}
+    </span>
+    {% endif %}
+</div>
+    
+<!-- News Articles Grid -->
+{% if articles %}
+<div class="row g-4">
+    {% for article in articles %}
+    <div class="col-lg-6 col-md-6 mb-4">
+        <div class="card news-card h-100">
+            <div class="card-header bg-transparent border-bottom border-secondary pb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        {% if article.category == 'Breaking' %}
+                            <span class="badge bg-danger"><i class="fas fa-bolt me-1"></i>Breaking</span>
+                        {% elif article.category == 'India' %}
+                            <span class="badge bg-primary"><i class="fas fa-flag me-1"></i>India</span>
+                        {% elif article.category == 'General' %}
+                            <span class="badge bg-secondary"><i class="fas fa-newspaper me-1"></i>General</span>
+                        {% else %}
+                            <span class="badge bg-info">{{ article.category|title }}</span>
+                        {% endif %}
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>{{ article.created_at|timesince }} ago
+                    </small>
+                </div>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <a href="{% url 'news:article_detail' article.pk %}" class="text-decoration-none">
+                        {% if article.title %}
+                            {{ article.title|truncatechars:100 }}
+                        {% else %}
+                            Latest News Update
+                        {% endif %}
+                    </a>
+                </h5>
+                
+                <p class="card-text mb-4 text-secondary">
+                    {{ article.get_short_summary|truncatechars:150 }}
+                </p>
+                
+                <div class="d-flex gap-2">
+                    <a href="{% url 'news:article_detail' article.pk %}" 
+                       class="btn btn-primary flex-fill">
+                        <i class="fas fa-eye me-1"></i>Read More
+                    </a>
+                    <a href="{{ article.url }}" 
+                       target="_blank" 
+                       class="btn btn-outline-primary flex-fill">
+                        <i class="fas fa-external-link-alt me-1"></i>Source
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+    
+<!-- Load More Section -->
+<div class="text-center mt-5">
+    <a href="{% url 'news:article_list' %}" class="btn btn-primary btn-lg px-5">
+        <i class="fas fa-newspaper me-2"></i>View All Articles
+        {% if total_articles %}
+        <span class="badge bg-secondary ms-2">{{ total_articles }}</span>
+        {% endif %}
+    </a>
+</div>
+    
+{% else %}
+<!-- No Articles State -->
+<div class="text-center py-5">
+    <div class="mb-4">
+        <i class="fas fa-newspaper text-muted" style="font-size: 5rem; opacity: 0.3;"></i>
+    </div>
+    <h3 class="fw-bold text-secondary mb-3">No Articles Available</h3>
+    <p class="text-muted mb-4">Get started by fetching the latest news from multiple sources.</p>
+    <a href="{% url 'news:scrape_articles' %}" class="btn btn-primary btn-lg px-5">
+        <i class="fas fa-sync-alt me-2"></i>Fetch Latest News
+    </a>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
-{% if scraping_status.is_running %}
 <script>
-// Auto-refresh page every 3 seconds when scraping is running
-setTimeout(function() {
-    location.reload();
-}, 3000);
+// Improved AJAX system with no excessive reloading
+let progressInterval;
+let isScrapingActive = {% if scraping_status.is_running %}true{% else %}false{% endif %};
+let lastUpdateTime = Date.now();
+
+// Modern notification system
+function showNotification(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 5000);
+}
+
+// Optimized progress updates (no page reloads)
+function updateScrapingProgress() {
+    if (!isScrapingActive) return;
+    
+    fetch('{% url "news:scraping_progress" %}', {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Cache-Control': 'no-cache'
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+    })
+    .then(data => {
+        // Update status message smoothly
+        const statusElement = document.querySelector('.alert-info p');
+        if (statusElement && statusElement.textContent !== data.message) {
+            statusElement.style.transition = 'opacity 0.3s';
+            statusElement.style.opacity = '0.7';
+            setTimeout(() => {
+                statusElement.textContent = data.message;
+                statusElement.style.opacity = '1';
+            }, 150);
+        }
+        
+        // Update progress bar with smooth animation
+        if (data.total > 0) {
+            const progressBar = document.querySelector('.progress-bar');
+            const progressSmall = document.querySelector('.alert-info small');
+            
+            if (progressBar) {
+                const percentage = Math.round((data.progress / data.total) * 100);
+                progressBar.style.width = percentage + '%';
+                progressBar.textContent = `${data.progress}/${data.total}`;
+                
+                if (progressSmall) {
+                    progressSmall.textContent = `Progress: ${percentage}% complete`;
+                }
+            }
+        }
+        
+        // Handle completion without page reload
+        if (!data.is_running && isScrapingActive) {
+            isScrapingActive = false;
+            clearInterval(progressInterval);
+            
+            // Show success notification
+            showNotification('✅ Scraping completed successfully! New articles are now available.', 'success');
+            
+            // Update the page content dynamically instead of reloading
+            setTimeout(() => {
+                updateArticlesSection();
+                hideScrapingStatus();
+            }, 1500);
+        }
+        
+        lastUpdateTime = Date.now();
+    })
+    .catch(error => {
+        console.error('Progress update failed:', error);
+        // Reduce frequency on error to avoid spam
+        clearInterval(progressInterval);
+        progressInterval = setInterval(updateScrapingProgress, 3000);
+    });
+}
+
+// Update articles section without full page reload
+function updateArticlesSection() {
+    fetch('{% url "news:home" %}', {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        // Extract and update only the articles section
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newArticles = doc.querySelector('.slide-in-left');
+        const currentArticles = document.querySelector('.slide-in-left');
+        
+        if (newArticles && currentArticles) {
+            // Smooth transition
+            currentArticles.style.opacity = '0.5';
+            setTimeout(() => {
+                currentArticles.innerHTML = newArticles.innerHTML;
+                currentArticles.style.opacity = '1';
+                // Re-initialize animations for new content
+                initializeCardAnimations();
+            }, 300);
+        }
+    })
+    .catch(error => {
+        console.error('Failed to update articles:', error);
+    });
+}
+
+// Hide scraping status smoothly
+function hideScrapingStatus() {
+    const scrapingAlert = document.querySelector('.slide-in-left .alert-info');
+    if (scrapingAlert) {
+        scrapingAlert.style.transition = 'all 0.5s ease';
+        scrapingAlert.style.opacity = '0';
+        scrapingAlert.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+            if (scrapingAlert.parentNode) {
+                scrapingAlert.parentNode.removeChild(scrapingAlert);
+            }
+        }, 500);
+    }
+}
+
+// Initialize animations for dynamically loaded content
+function initializeCardAnimations() {
+    document.querySelectorAll('.news-card').forEach((card, index) => {
+        card.style.animation = 'none';
+        setTimeout(() => {
+            card.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
+        }, 50);
+    });
+}
+
+// Start optimized progress tracking
+if (isScrapingActive) {
+    progressInterval = setInterval(updateScrapingProgress, 2000); // Every 2 seconds instead of 1
+    updateScrapingProgress(); // Initial call
+}
+
+// Handle form submissions with AJAX to prevent reloads
+document.addEventListener('DOMContentLoaded', function() {
+    const scrapingForm = document.querySelector('form[method="post"]');
+    if (scrapingForm && !scrapingForm.action) { // Only for home page scraping form
+        scrapingForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting...';
+            
+            fetch('{% url "news:home" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    isScrapingActive = true;
+                    showNotification('🚀 News scraping started! Progress will be shown below.', 'info');
+                    
+                    // Start progress tracking
+                    if (!progressInterval) {
+                        progressInterval = setInterval(updateScrapingProgress, 2000);
+                    }
+                    
+                    // Show scraping status UI
+                    showScrapingStatus();
+                } else {
+                    showNotification('⚠️ ' + (data.message || 'Scraping could not be started.'), 'warning');
+                }
+            })
+            .catch(error => {
+                console.error('Error starting scraping:', error);
+                showNotification('❌ Failed to start scraping. Please try again.', 'danger');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        });
+    }
+});
+
+// Show scraping status UI
+function showScrapingStatus() {
+    const statusHTML = `
+        <div class="slide-in-left">
+            <div class="alert alert-info mb-4">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fas fa-spinner fa-spin me-3 fa-lg"></i>
+                    <h5 class="mb-0 fw-semibold">Processing Latest News</h5>
+                </div>
+                <p class="mb-2 opacity-75">Initializing news scraping...</p>
+                <div class="progress mt-3" style="display: none;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 0%">
+                        0/0
+                    </div>
+                </div>
+                <small class="text-muted mt-2 d-block">Starting up...</small>
+            </div>
+        </div>
+    `;
+    
+    const articlesSection = document.querySelector('.slide-in-left');
+    if (articlesSection && !document.querySelector('.alert-info')) {
+        articlesSection.insertAdjacentHTML('afterbegin', statusHTML);
+    }
+}
+
 </script>
-{% endif %}
+
+<script>
+// Add smooth animations and interactions
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click effect to buttons
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // Create ripple effect
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+    
+    // Animate stats cards on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+            }
+        });
+    }, observerOptions);
+    
+    document.querySelectorAll('.stats-card, .news-card').forEach(card => {
+        observer.observe(card);
+    });
+});
+</script>
+
+<style>
+/* Professional News Channel Styles */
+.pulse {
+    animation: pulse-dot 1.5s infinite;
+}
+
+@keyframes pulse-dot {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+.news-header {
+    background: #ffffff !important;
+    border-bottom: 3px solid #dc2626 !important;
+}
+
+.breaking-badge .badge {
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    animation: flash 2s infinite;
+}
+
+@keyframes flash {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0.7; }
+}
+
+.stats-bar {
+    background: #f8f9fa !important;
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+.stat-item {
+    padding: 0.5rem;
+    transition: transform 0.2s;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+}
+
+.news-article-card {
+    border: 1px solid #e9ecef !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.news-article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    border-color: #dc2626 !important;
+}
+
+.news-headline {
+    font-size: 1.1rem;
+    line-height: 1.4;
+    color: #1a1a1a;
+}
+
+.hover-text-danger:hover {
+    color: #dc2626 !important;
+    transition: color 0.2s;
+}
+
+.news-summary {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #6c757d;
+}
+
+.headline-marker {
+    background: #dc2626 !important;
+    border-radius: 2px;
+}
+
+.badge.bg-danger {
+    background-color: #dc2626 !important;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.badge.bg-primary {
+    background-color: #0d6efd !important;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.badge.bg-info {
+    background-color: #0dcaf0 !important;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.btn-danger {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.btn-danger:hover {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    color: #0d6efd;
+    border-color: #0d6efd;
+    font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    transform: translateY(-1px);
+}
+
+.btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+    font-weight: 600;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    transform: translateY(-1px);
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffecb3;
+    color: #664d03;
+}
+
+.empty-state {
+    padding: 3rem 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .news-header .col-md-6:first-child {
+        margin-bottom: 1rem;
+    }
+    
+    .breaking-badge {
+        margin-bottom: 0.5rem;
+    }
+    
+    .stats-bar .row {
+        font-size: 0.9rem;
+    }
+    
+    .headline-marker {
+        width: 3px !important;
+        height: 25px !important;
+    }
+    
+    .news-headline {
+        font-size: 1rem;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+</style>
 {% endblock %}

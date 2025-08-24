@@ -1,5 +1,5 @@
 """
-WSGI config for NewsAggregator project.
+WSGI config for Briefly project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

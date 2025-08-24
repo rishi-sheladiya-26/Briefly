@@ -1,6 +1,6 @@
 {% extends 'news/base.html' %}
 
-{% block title %}All Articles - News Aggregator{% endblock %}
+{% block title %}All Articles - Briefly{% endblock %}
 
 {% block content %}
 <div class="fade-in">
@@ -9,10 +9,10 @@
         <div class="col-12">
             <div class="text-center mb-4">
                 <h1 class="display-5 fw-bold mb-3">
-                    <i class="fas fa-newspaper me-3 text-primary"></i>
-                    News Collection
+                    <i class="fas fa-bolt me-3 text-primary"></i>
+                    Your News Library
                 </h1>
-                <p class="lead text-muted mb-4">
+                <p class="lead text-secondary mb-4">
                     Discover curated articles with AI-powered summaries
                 </p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap">
@@ -57,7 +57,7 @@
                     </h5>
                     
                     <!-- Article Summary -->
-                    <p class="card-text text-muted mb-4 lh-base">
+                    <p class="card-text text-secondary mb-4 lh-base">
                         {{ article.get_short_summary }}
                     </p>
                     
@@ -135,8 +135,8 @@
             </ul>
         </nav>
         
-        <div class="card bg-light border-0 px-4 py-2">
-            <small class="text-muted fw-medium">
+        <div class="card glass-card border-0 px-4 py-2">
+            <small class="text-secondary fw-medium">
                 <i class="fas fa-info-circle me-2"></i>
                 Showing {{ articles.start_index }}-{{ articles.end_index }} of {{ articles.paginator.count }} articles
             </small>
@@ -150,8 +150,8 @@
         <div class="mb-4">
             <i class="fas fa-newspaper text-primary opacity-50" style="font-size: 6rem;"></i>
         </div>
-        <h3 class="fw-bold text-muted mb-3">Your News Library is Empty</h3>
-        <p class="text-muted mb-4 fs-5">
+        <h3 class="fw-bold text-secondary mb-3">Your News Library is Empty</h3>
+        <p class="text-secondary mb-4 fs-5">
             Start building your personalized news collection by scraping articles from trusted sources.
         </p>
         <a href="{% url 'news:scrape_articles' %}" class="btn btn-primary btn-lg px-5">

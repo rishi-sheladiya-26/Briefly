@@ -1,0 +1,274 @@
+/* Enhanced Stats Cards Styling */
+.stats-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: rgba(30, 41, 59, 0.9) !important;
+    border: 1px solid rgba(51, 65, 85, 0.8) !important;
+}
+
+.stats-card:hover {
+    transform: translateY(-3px);
+    background: rgba(30, 41, 59, 1) !important;
+    border-color: rgba(59, 130, 246, 0.5) !important;
+}
+
+.stats-circle {
+    background: rgba(59, 130, 246, 0.15) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.stats-card:hover .stats-circle {
+    background: rgba(59, 130, 246, 0.25) !important;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    transform: scale(1.05);
+    border-color: rgba(59, 130, 246, 0.6);
+}
+
+/* Enhanced number animations */
+.stats-number {
+    animation: countUp 0.8s ease-out;
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Pulse animation for active stats */
+.stats-active {
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+    }
+    100% {
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Logo enhancement for main brand */
+.logo-enhanced {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Stats description enhancements */
+.stats-description {
+    font-size: 0.75rem;
+    color: rgba(226, 232, 240, 0.85) !important;
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover .stats-description {
+    color: rgba(248, 250, 252, 1) !important;
+}
+
+/* Enhanced hero section icons */
+.hero-icon {
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+    animation: gentle-float 3s ease-in-out infinite;
+}
+
+@keyframes gentle-float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: 768px) {
+    .stats-circle {
+        width: 70px !important;
+        height: 70px !important;
+    }
+    
+    .stats-circle h2,
+    .stats-circle h3 {
+        font-size: 1.2rem;
+    }
+    
+    .stats-description {
+        font-size: 0.7rem;
+    }
+}
+
+/* Color variations for different stat types */
+.stats-articles .stats-circle {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3)) !important;
+}
+
+.stats-sources .stats-circle {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.3), rgba(0, 242, 254, 0.3)) !important;
+}
+
+.stats-summaries .stats-circle {
+    background: linear-gradient(135deg, rgba(240, 147, 251, 0.3), rgba(245, 87, 108, 0.3)) !important;
+}
+
+.stats-updates .stats-circle {
+    background: linear-gradient(135deg, rgba(255, 206, 84, 0.3), rgba(255, 161, 90, 0.3)) !important;
+}
+
+/* Loading skeleton for empty states */
+.skeleton-loader {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 25%, rgba(59, 130, 246, 0.2) 50%, rgba(59, 130, 246, 0.1) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 0.5rem;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Enhanced text visibility */
+.text-high-contrast {
+    color: #f8fafc !important;
+}
+
+.text-readable {
+    color: #e2e8f0 !important;
+}
+
+.text-muted-readable {
+    color: #a1a1aa !important;
+}
+
+/* Enhanced card styling for better visibility */
+.glass-card {
+    background: rgba(30, 41, 59, 0.95) !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(51, 65, 85, 0.8) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Progress bars with better visibility */
+.progress {
+    background-color: rgba(15, 23, 42, 0.8) !important;
+}
+
+.progress-bar {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+}
+
+/* Enhanced visibility for all date and time elements */
+.text-muted {
+    color: #9ca3af !important;
+}
+
+small.text-muted {
+    color: #d1d5db !important;
+    font-weight: 500;
+}
+
+/* Card specific date/time fixes */
+.card-header small.text-muted,
+.card small.text-muted {
+    color: #e5e7eb !important;
+}
+
+/* Article meta information */
+.article-meta,
+.article-meta small,
+.article-meta .text-muted {
+    color: #f3f4f6 !important;
+}
+
+/* Time and date stamps */
+.timestamp,
+.date-stamp,
+.time-ago {
+    color: #e2e8f0 !important;
+    font-weight: 500;
+}
+
+/* Article content readability fixes */
+.article-content,
+.article-content p,
+.article-content div {
+    color: #f8fafc !important;
+}
+
+/* Complete article text */
+.fs-6.lh-lg,
+.text-justify {
+    color: #f8fafc !important;
+}
+
+/* All card body text */
+.card-body p,
+.card-body div,
+.card-body .fs-5,
+.card-body .fs-6 {
+    color: #f8fafc !important;
+}
+
+/* Summary text */
+.lh-lg {
+    color: #f8fafc !important;
+}
+
+/* Article insights stats boxes - fix visibility */
+.bg-light {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    border: 1px solid rgba(51, 65, 85, 0.8) !important;
+}
+
+.bg-light .fw-bold.fs-4 {
+    color: #f8fafc !important;
+}
+
+.bg-light small.text-muted {
+    color: #e2e8f0 !important;
+}
+
+/* Scrape page text visibility improvements */
+.alert-light {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(51, 65, 85, 0.8) !important;
+}
+
+.alert-light .fw-bold,
+.alert-light .fw-medium {
+    color: #f8fafc !important;
+}
+
+.alert-light .small,
+.alert-light small {
+    color: #e2e8f0 !important;
+}
+
+.bg-light.rounded .fw-semibold,
+.bg-light.rounded .small {
+    color: #f8fafc !important;
+}
+
+.bg-light.rounded small {
+    color: #e2e8f0 !important;
+}

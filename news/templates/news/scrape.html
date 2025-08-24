@@ -1,16 +1,16 @@
 {% extends 'news/base.html' %}
 
-{% block title %}Scrape News - News Aggregator{% endblock %}
+{% block title %}Scrape News - Briefly{% endblock %}
 
 {% block content %}
 <div class="fade-in">
     <!-- Header Section -->
     <div class="text-center mb-5">
         <h1 class="display-5 fw-bold mb-3">
-            <i class="fas fa-sync-alt me-3 text-primary"></i>
+            <i class="fas fa-bolt me-3 text-primary"></i>
             News Collection Hub
         </h1>
-        <p class="lead text-muted mb-4">
+        <p class="lead text-secondary mb-4">
             Automatically gather and process the latest news from trusted sources
         </p>
     </div>
@@ -18,7 +18,7 @@
     <div class="row g-4">
         <!-- Main Scraping Control -->
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0">
                 <div class="card-header bg-primary bg-opacity-10 border-0">
                     <h4 class="fw-bold mb-0">
                         <i class="fas fa-robot me-2 text-primary"></i>
@@ -33,7 +33,7 @@
                                 <i class="fas fa-rocket fa-2x text-success"></i>
                             </div>
                             <h5 class="fw-bold text-success mb-2">System Ready</h5>
-                            <p class="text-muted">Ready to collect the latest news stories</p>
+                            <p class="text-secondary">Ready to collect the latest news stories</p>
                         </div>
                         
                         <div class="alert alert-light border">
@@ -49,7 +49,7 @@
                                         </div>
                                         <div>
                                             <div class="fw-medium">Source Discovery</div>
-                                            <small class="text-muted">Scan trusted news websites</small>
+                                            <small class="text-secondary">Scan trusted news websites</small>
                                         </div>
                                     </div>
                                 </div>
@@ -60,7 +60,7 @@
                                         </div>
                                         <div>
                                             <div class="fw-medium">Content Extraction</div>
-                                            <small class="text-muted">Fetch full article text</small>
+                                            <small class="text-secondary">Fetch full article text</small>
                                         </div>
                                     </div>
                                 </div>
@@ -71,7 +71,7 @@
                                         </div>
                                         <div>
                                             <div class="fw-medium">AI Summarization</div>
-                                            <small class="text-muted">Generate intelligent summaries</small>
+                                            <small class="text-secondary">Generate intelligent summaries</small>
                                         </div>
                                     </div>
                                 </div>
@@ -82,7 +82,7 @@
                                         </div>
                                         <div>
                                             <div class="fw-medium">Storage & Indexing</div>
-                                            <small class="text-muted">Organize in your library</small>
+                                            <small class="text-secondary">Organize in your library</small>
                                         </div>
                                     </div>
                                 </div>
@@ -104,7 +104,7 @@
                                 <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
                             </div>
                             <h5 class="fw-bold text-primary mb-2">Processing Articles</h5>
-                            <p class="text-muted">{{ scraping_status.message }}</p>
+                            <p class="text-secondary">{{ scraping_status.message }}</p>
                         </div>
                         
                         {% if scraping_status.total > 0 %}
@@ -119,7 +119,7 @@
                                          style="width: {% widthratio scraping_status.progress scraping_status.total 100 %}%"></div>
                                 </div>
                                 <div class="text-center mt-2">
-                                    <small class="text-muted">
+                                    <small class="text-secondary">
                                         {% widthratio scraping_status.progress scraping_status.total 100 %}% Complete
                                     </small>
                                 </div>
@@ -127,9 +127,15 @@
                         {% endif %}
                         
                         <div class="text-center">
-                            <button class="btn btn-secondary btn-lg" disabled>
+                            <button class="btn btn-secondary btn-lg me-3" disabled>
                                 <i class="fas fa-hourglass-half me-2"></i>Processing in Progress
                             </button>
+                            <form method="post" action="{% url 'news:stop_scraping' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-lg">
+                                    <i class="fas fa-stop me-2"></i>Stop Process
+                                </button>
+                            </form>
                         </div>
                     {% endif %}
                 </div>
@@ -139,7 +145,7 @@
         <!-- Sidebar -->
         <div class="col-lg-4">
             <!-- News Sources -->
-            <div class="card border-0 shadow-sm mb-4">
+            <div class="card border-0 mb-4">
                 <div class="card-header bg-success bg-opacity-10 border-0">
                     <h5 class="fw-bold mb-0">
                         <i class="fas fa-rss me-2 text-success"></i>
@@ -154,7 +160,7 @@
                             </div>
                             <div>
                                 <h6 class="fw-semibold mb-1">India Today</h6>
-                                <small class="text-muted">National & international news from India</small>
+                                <small class="text-secondary">National & international news from India</small>
                             </div>
                         </div>
                     </div>
@@ -166,7 +172,7 @@
                             </div>
                             <div>
                                 <h6 class="fw-semibold mb-1">BBC News</h6>
-                                <small class="text-muted">Global news and world updates</small>
+                                <small class="text-secondary">Global news and world updates</small>
                             </div>
                         </div>
                     </div>
@@ -186,7 +192,7 @@
             </div>
             
             <!-- AI Processing Info -->
-            <div class="card border-0 shadow-sm mb-4">
+            <div class="card border-0 mb-4">
                 <div class="card-header bg-warning bg-opacity-10 border-0">
                     <h5 class="fw-bold mb-0">
                         <i class="fas fa-brain me-2 text-warning"></i>
@@ -196,7 +202,7 @@
                 <div class="card-body p-4">
                     <div class="mb-3">
                         <h6 class="fw-semibold text-primary mb-2">Smart Summarization</h6>
-                        <ul class="small text-muted mb-0">
+                        <ul class="small text-secondary mb-0">
                             <li>Extracts key insights</li>
                             <li>Removes redundant information</li>
                             <li>Preserves context and meaning</li>
@@ -206,7 +212,7 @@
                     
                     <div class="mb-3">
                         <h6 class="fw-semibold text-success mb-2">Content Processing</h6>
-                        <ul class="small text-muted mb-0">
+                        <ul class="small text-secondary mb-0">
                             <li>Filters quality content</li>
                             <li>Categorizes articles</li>
                             <li>Removes advertisements</li>
@@ -217,7 +223,7 @@
             </div>
             
             <!-- Quick Actions -->
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0">
                 <div class="card-header bg-info bg-opacity-10 border-0">
                     <h5 class="fw-bold mb-0">
                         <i class="fas fa-bolt me-2 text-info"></i>
@@ -250,13 +256,13 @@
                         <h6 class="fw-bold text-warning mb-2">Processing Guidelines</h6>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <ul class="small mb-0 text-muted">
+                                <ul class="small mb-0 text-secondary">
                                     <li>Processing time varies with article count</li>
                                     <li>Only new articles are collected</li>
                                 </ul>
                             </div>
                             <div class="col-md-6">
-                                <ul class="small mb-0 text-muted">
+                                <ul class="small mb-0 text-secondary">
                                     <li>Page updates automatically during processing</li>
                                     <li>Safe to leave page running in background</li>
                                 </ul>
